@@ -1,0 +1,5 @@
+# ntp
+
+```
+server 169.254.169.123 prefer iburst
+```
