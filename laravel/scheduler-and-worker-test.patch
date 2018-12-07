@@ -1,0 +1,62 @@
+diff --git a/app/Console/Kernel.php b/app/Console/Kernel.php
+index a8c5158..adc2132 100644
+--- a/app/Console/Kernel.php
++++ b/app/Console/Kernel.php
+@@ -24,6 +24,14 @@ class Kernel extends ConsoleKernel
+      */
+     protected function schedule(Schedule $schedule)
+     {
++        $schedule->call(function () {
++            \Mail::raw('Test Body', function ($message) {
++                $message->to('somebody@example.com')
++                        ->subject('At laravel scheduler');
++            });
++
++            \App\Jobs\WorkerTest::dispatch();
++        })->everyMinute();
+         // $schedule->command('inspire')
+         //          ->hourly();
+     }
+diff --git a/app/Jobs/WorkerTest.php b/app/Jobs/WorkerTest.php
+new file mode 100644
+index 0000000..fdb581f
+--- /dev/null
++++ b/app/Jobs/WorkerTest.php
+@@ -0,0 +1,37 @@
++<?php
++
++namespace App\Jobs;
++
++use Illuminate\Bus\Queueable;
++use Illuminate\Queue\SerializesModels;
++use Illuminate\Queue\InteractsWithQueue;
++use Illuminate\Contracts\Queue\ShouldQueue;
++use Illuminate\Foundation\Bus\Dispatchable;
++
++class WorkerTest implements ShouldQueue
++{
++    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
++
++    /**
++     * Create a new job instance.
++     *
++     * @return void
++     */
++    public function __construct()
++    {
++        //
++    }
++
++    /**
++     * Execute the job.
++     *
++     * @return void
++     */
++    public function handle()
++    {
++        \Mail::raw('Test Body', function ($message) {
++            $message->to('somebody@example.com')
++                    ->subject('At laravel worker');
++        });
++    }
++}
