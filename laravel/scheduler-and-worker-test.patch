@@ -1,18 +1,13 @@
 diff --git a/app/Console/Kernel.php b/app/Console/Kernel.php
-index a8c5158..adc2132 100644
+index a8c5158..37d9fec 100644
 --- a/app/Console/Kernel.php
 +++ b/app/Console/Kernel.php
-@@ -24,6 +24,15 @@ class Kernel extends ConsoleKernel
+@@ -24,6 +24,10 @@ class Kernel extends ConsoleKernel
       */
      protected function schedule(Schedule $schedule)
      {
 +        $schedule->call(function () {
-+            \Mail::raw('Test Body', function ($message) {
-+                $message->to('somebody@example.com')
-+                    ->from('noreply@example.com')
-+                    ->subject('At laravel scheduler');
-+            });
-+
++            \Log::debug("At laravel scheduler");
 +            \App\Jobs\WorkerTest::dispatch();
 +        })->everyMinute();
          // $schedule->command('inspire')
@@ -20,10 +15,10 @@ index a8c5158..adc2132 100644
      }
 diff --git a/app/Jobs/WorkerTest.php b/app/Jobs/WorkerTest.php
 new file mode 100644
-index 0000000..fdb581f
+index 0000000..f66c375
 --- /dev/null
 +++ b/app/Jobs/WorkerTest.php
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,34 @@
 +<?php
 +
 +namespace App\Jobs;
@@ -55,10 +50,6 @@ index 0000000..fdb581f
 +     */
 +    public function handle()
 +    {
-+        \Mail::raw('Test Body', function ($message) {
-+            $message->to('somebody@example.com')
-+                ->from('noreply@example.com')
-+                ->subject('At laravel worker');
-+        });
++        \Log::debug("At Laravel worker");
 +    }
 +}
